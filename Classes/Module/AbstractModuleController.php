@@ -443,7 +443,7 @@ abstract class AbstractModuleController extends BaseScriptClass
                     $deleteButton = $buttonBar->makeLinkButton()
                         ->setHref('#')
                         ->setClasses('t3js-editform-delete-record')
-                        ->setTitle($lang->getLL('deleteItem'))
+                        ->setTitle($lang->sL('LLL:EXT:backend/Resources/Private/Language/locallang_layout.xlf:deleteItem'))
                         ->setIcon($this->moduleTemplate->getIconFactory()->getIcon(
                             'actions-edit-delete',
                             Icon::SIZE_SMALL

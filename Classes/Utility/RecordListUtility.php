@@ -327,7 +327,11 @@ class RecordListUtility extends DatabaseRecordList
 
         // Finding the total amount of records on the page
         // (API function from TYPO3\CMS\Recordlist\RecordList\AbstractDatabaseRecordList)
-        $this->setTotalItems($queryParts);
+        if (version_compare(TYPO3_version, '8.0.0', '<')) {
+            $this->setTotalItems($queryParts);
+        } else {
+            $this->setTotalItems($table, $this->id, array($queryParts['WHERE']));
+        }
 
         // Init:
         $dbCount = 0;
@@ -1106,5 +1110,14 @@ class RecordListUtility extends DatabaseRecordList
         $redirect = '&redirect=' . ($requestURI == -1 ? "'+T3_THIS_LOCATION+'" : rawurlencode($requestURI ? $requestURI : GeneralUtility::getIndpEnv('REQUEST_URI'))) .
             '&vC=' . rawurlencode($this->getBackendUserAuthentication()->veriCode()) . '&prErr=1&uPT=1';
         return BackendUtility::getModuleUrl($GLOBALS['MCONF']['name']) . $params . $redirect;
+    }
+
+    /**
+     * Get database instance
+     *
+    * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+    */
+    protected function getDatabaseConnection() {
+        return $GLOBALS['TYPO3_DB'];
     }
 }

@@ -44,9 +44,10 @@ class GroupTreeUtility extends AbstractTreeView
      * REMEMBER to feed a $clause which will filter out non-readable pages!
      *
      * @param string $clause Part of where query which will filter out non-readable pages.
+     * @param string $orderByFields Record ORDER BY field
      * @return void
      */
-    public function init($clause = '')
+    public function init($clause = '', $orderByFields = '')
     {
         parent::init(' AND deleted=0 '.$clause, 'title');
 
