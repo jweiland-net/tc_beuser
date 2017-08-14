@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;   
+use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
 use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
 /**
@@ -68,24 +68,24 @@ class RecordListUtility extends DatabaseRecordList
     public function generateList()
     {
 
-            // Set page record in header
+        // Set page record in header
         $this->pageRecord = BackendUtility::getRecordWSOL('pages', $this->id);
 
         $backendUser = $this->getBackendUserAuthentication();
 
         foreach ($GLOBALS['TCA'] as $tableName => $_) {
-                // Checking if the table should be rendered:
-                // Checks that we see only permitted/requested tables:
+            // Checking if the table should be rendered:
+            // Checks that we see only permitted/requested tables:
             if ((!$this->table || $tableName==$this->table) &&
                 (!$this->tableList || GeneralUtility::inList($this->tableList, $tableName)) &&
                 $backendUser->check('tables_select', $tableName)
             ) {
-                    // Hide tables which are configured via TSConfig not to be shown (also works for admins):
+                // Hide tables which are configured via TSConfig not to be shown (also works for admins):
                 if (GeneralUtility::inList($this->hideTables, $tableName)) {
                     continue;
                 }
 
-                    // iLimit is set depending on whether we're in single- or multi-table mode
+                // iLimit is set depending on whether we're in single- or multi-table mode
                 if ($this->table) {
                     $this->iLimit = (isset($GLOBALS['TCA'][$tableName]['interface']['maxSingleDBListItems']) ?
                         intval($GLOBALS['TCA'][$tableName]['interface']['maxSingleDBListItems']) :
@@ -99,7 +99,7 @@ class RecordListUtility extends DatabaseRecordList
                     $this->iLimit = $this->showLimit;
                 }
 
-                    // Setting fields to select:
+                // Setting fields to select:
                 if ($this->allFields) {
                     $fields = $this->makeFieldList($tableName);
                     $fields[] = 'tstamp';
@@ -117,11 +117,11 @@ class RecordListUtility extends DatabaseRecordList
                     $fields = array();
                 }
 
-                    // Find ID to use (might be different for "versioning_followPages" tables)
+                // Find ID to use (might be different for "versioning_followPages" tables)
                 if (intval($this->searchLevels) == 0) {
                     $this->pidSelect = 'pid='.intval($this->id);
                 }
-                    // Finally, render the list:
+                // Finally, render the list:
                 $this->HTMLcode .= $this->getTable($tableName, $this->id, implode(',', $fields));
             }
         }
@@ -147,7 +147,7 @@ class RecordListUtility extends DatabaseRecordList
         $lang = $this->getLanguageService();
         $db = $this->getDatabaseConnection();
         // Init
-        $addWhere = '';
+        $addWhere = [];
         $titleCol = $GLOBALS['TCA'][$table]['ctrl']['label'];
         $thumbsCol = $GLOBALS['TCA'][$table]['ctrl']['thumbnail'];
         $l10nEnabled = $GLOBALS['TCA'][$table]['ctrl']['languageField']
@@ -181,7 +181,7 @@ class RecordListUtility extends DatabaseRecordList
         if ($this->localizationView && $l10nEnabled) {
             $this->fieldArray[] = '_LOCALIZATION_';
             $this->fieldArray[] = '_LOCALIZATION_b';
-            $addWhere .= ' AND (
+            $addWhere[] = 'AND (
 				' . $GLOBALS['TCA'][$table]['ctrl']['languageField'] . '<=0
 				OR
 				' . $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] . ' = 0
@@ -260,10 +260,10 @@ class RecordListUtility extends DatabaseRecordList
             $defaultFlashMessageQueue->enqueue($flashMessage);
         }
         // Making sure that the fields in the field-list ARE in the field-list from TCA!
-        $selectFields = array_intersect($selectFields, $fieldListFields);
+        $selectFields = array_values(array_intersect($selectFields, $fieldListFields));
         // Implode it into a list of fields for the SQL-statement.
         $selFieldList = implode(',', $selectFields);
-        $this->selFieldList = $selFieldList;
+        $this->selFieldList = implode(',', $selectFields);;
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['getTable'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['getTable'] as $classData) {
                 $hookObject = GeneralUtility::getUserObj($classData);
@@ -273,27 +273,27 @@ class RecordListUtility extends DatabaseRecordList
                         1195114460
                     );
                 }
-                $hookObject->getDBlistQuery($table, $id, $addWhere, $selFieldList, $this);
+                $hookObject->getDBlistQuery($table, $id, implode(' ', $addWhere), $this->selFieldList, $this);
             }
         }
 
-            // ingo.renner@dkd.de
+        // ingo.renner@dkd.de
         if ($this->hideDisabledRecords) {
-            $addWhere .= ' AND '.$table.'.'
+            $addWhere[] = 'AND '.$table.'.'
                 .$GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['disabled']
                 .' = 0';
         }
 
-            //ingo.renner@dkd.de
+        //ingo.renner@dkd.de
         if ($this->getBackendUserAuthentication()->user['admin'] == '0' && $table == 'be_users') {
-            $addWhere .= ' AND admin = 0';
-            $addWhere .= ' AND username NOT LIKE ("_cli%") ';
+            $addWhere[] = 'AND admin = 0';
+            $addWhere[] = 'AND username NOT LIKE ("_cli%") ';
         }
 
         //dkd-kartolo
         //mod2, exclude fe_user which is also be_user
         if ($table == 'fe_users') {
-            $addWhere .= ' AND username not in '.$this->excludeBE;
+            $addWhere[] = 'AND username not in '.$this->excludeBE;
         }
 
         //dkd-kartolo
@@ -301,9 +301,9 @@ class RecordListUtility extends DatabaseRecordList
         if ($table == 'be_groups' && $this->getBackendUserAuthentication()->user['admin']!= '1') {
             $groupID = implode(',', TcBeuserUtility::showGroupID());
             if (!empty($groupID)) {
-                $addWhere .= ' AND uid in ('.$groupID.')';
+                $addWhere[] = 'AND uid in ('.$groupID.')';
             } else {
-                $addWhere .= ' AND uid not in ('.TcBeuserUtility::getAllGroupsID().')';
+                $addWhere[] = 'AND uid not in ('.TcBeuserUtility::getAllGroupsID().')';
             }
         }
 
@@ -317,20 +317,18 @@ class RecordListUtility extends DatabaseRecordList
             $this->firstElementNumber = $this->firstElementNumber - 2;
             $this->iLimit = $this->iLimit + 2;
             // (API function from TYPO3\CMS\Recordlist\RecordList\AbstractDatabaseRecordList)
-            $queryParts = $this->makeQueryArray($table, $id, $addWhere, $selFieldList);
+            $queryParts = $this->getQueryParts($table, $id, $addWhere, $selectFields);
             $this->firstElementNumber = $this->firstElementNumber + 2;
             $this->iLimit = $this->iLimit - 2;
         } else {
-            // (API function from TYPO3\CMS\Recordlist\RecordList\AbstractDatabaseRecordList)
-            $queryParts = $this->makeQueryArray($table, $id, $addWhere, $selFieldList);
+            $queryParts = $this->getQueryParts($table, $id, $addWhere, $selectFields);
         }
 
         // Finding the total amount of records on the page
-        // (API function from TYPO3\CMS\Recordlist\RecordList\AbstractDatabaseRecordList)
         if (version_compare(TYPO3_version, '8.0.0', '<')) {
             $this->setTotalItems($queryParts);
         } else {
-            $this->setTotalItems($table, $this->id, array($queryParts['WHERE']));
+            $this->setTotalItems($table, $this->id, [$queryParts['where']]);
         }
 
         // Init:
@@ -351,8 +349,15 @@ class RecordListUtility extends DatabaseRecordList
                     $this->showLimit = $this->totalItems;
                     $this->iLimit = $this->totalItems;
                 }
-                $result = $db->exec_SELECT_queryArray($queryParts);
-                $dbCount = $db->sql_num_rows($result);
+
+                if (version_compare(TYPO3_version, '8.0.0', '<')) {
+                    $result = $db->exec_SELECT_queryArray($queryParts);
+                    $dbCount = $db->sql_num_rows($result);
+                } else {
+                    $queryBuilder = $this->getQueryBuilder($table, $id, $addWhere, $selectFields);
+                    $result = $queryBuilder->execute();
+                    $dbCount = $result->rowCount();
+                }
             }
         }
         // If any records was selected, render the list:
@@ -369,10 +374,10 @@ class RecordListUtility extends DatabaseRecordList
             } else {
                 $icon = $this->table
                     ? '<span title="' . $lang->getLL('contractView', true) . '">' .
-                        $this->iconFactory->getIcon('actions-view-table-collapse', Icon::SIZE_SMALL)->render() .
-                        '</span>'
+                    $this->iconFactory->getIcon('actions-view-table-collapse', Icon::SIZE_SMALL)->render() .
+                    '</span>'
                     : '<span title="' . $lang->getLL('expandView', true) . '">' .
-                        $this->iconFactory->getIcon('actions-view-table-expand', Icon::SIZE_SMALL)->render() .
+                    $this->iconFactory->getIcon('actions-view-table-expand', Icon::SIZE_SMALL)->render() .
                     '</span>';
                 $theData[$titleCol] = $this->linkWrapTable(
                     $table,
@@ -417,14 +422,15 @@ class RecordListUtility extends DatabaseRecordList
                 $prevPrevUid = 0;
                 // Get first two rows and initialize prevPrevUid and prevUid if on page > 1
                 if ($this->firstElementNumber > 2 && $this->iLimit > 0) {
-                    $row = $db->sql_fetch_assoc($result);
+                    $row = $row = $result instanceof \Doctrine\DBAL\Driver\PDOStatement ? $result->fetch() : $db->sql_fetch_assoc($result);
                     $prevPrevUid = -((int)$row['uid']);
-                    $row = $db->sql_fetch_assoc($result);
+                    $row = $row = $result instanceof \Doctrine\DBAL\Driver\PDOStatement ? $result->fetch() : $db->sql_fetch_assoc($result);
                     $prevUid = $row['uid'];
                 }
+
                 $accRows = array();
                 // Accumulate rows here
-                while ($row = $db->sql_fetch_assoc($result)) {
+                while ($row = $result instanceof \Doctrine\DBAL\Driver\PDOStatement ? $result->fetch() : $db->sql_fetch_assoc($result)) {
                     if (!$this->isRowListingConditionFulfilled($table, $row)) {
                         continue;
                     }
@@ -444,7 +450,7 @@ class RecordListUtility extends DatabaseRecordList
                         }
                     }
                 }
-                $db->sql_free_result($result);
+//                $db->sql_free_result($result);
                 $this->totalRowCount = count($accRows);
                 // CSV initiated
                 if ($this->csvOutput) {
@@ -472,9 +478,9 @@ class RecordListUtility extends DatabaseRecordList
                                     // placeholder records otherwise the list is messed up a bit
                                     if ($row['_MOVE_PLH_uid'] && $row['_MOVE_PLH_pid']) {
                                         $where = 't3ver_move_id="' . (int)$lRow['uid'] . '"' .
-                                        ' AND pid="' . $row['_MOVE_PLH_pid'] . '"' .
-                                        ' AND t3ver_wsid=' . $row['t3ver_wsid'] . BackendUtility::deleteClause($table);
-                                        $tmpRow = BackendUtility::getRecordRaw($table, $where, $selFieldList);
+                                            ' AND pid="' . $row['_MOVE_PLH_pid'] . '"' .
+                                            ' AND t3ver_wsid=' . $row['t3ver_wsid'] . BackendUtility::deleteClause($table);
+                                        $tmpRow = BackendUtility::getRecordRaw($table, $where, $this->selFieldList);
                                         $lRow = is_array($tmpRow) ? $tmpRow : $lRow;
                                     }
                                     // In offline workspace, look for alternative record:
@@ -948,8 +954,8 @@ class RecordListUtility extends DatabaseRecordList
             $this->addActionToCellGroup($cells, $editAction, 'edit');
         }
 
-            //dkd-kartolo
-            //show magnifier (mod4)
+        //dkd-kartolo
+        //show magnifier (mod4)
         if (!$this->disableControls['detail']) {
             $infoAction = '<a href="#" class="btn btn-default" onclick="javascript:top.goToModule(\'tcTools_Overview\', 1, \'&' .
                 $this->analyzeParam . '=' . $row['uid'] . '\')"' .
@@ -959,8 +965,8 @@ class RecordListUtility extends DatabaseRecordList
             $this->addActionToCellGroup($cells, $infoAction, 'info');
         }
 
-            //dkd-kartolo
-            //show import fe user icon
+        //dkd-kartolo
+        //show import fe user icon
         if (!$this->disableControls['import']) {
             $scriptname = GeneralUtility::getIndpEnv('SCRIPT_NAME');
             $params = '&SET[function]=import&feID=' . $row['uid'];
@@ -1021,21 +1027,21 @@ class RecordListUtility extends DatabaseRecordList
                 } else {
                     $actionName = 'delete';
                     $refCountMsg = BackendUtility::referenceCount(
-                        $table,
-                        $row['uid'],
-                        ' ' .
-                        $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:labels.referencesToRecord'),
-                        $this->getReferenceCount(
                             $table,
-                            $row['uid']
-                        )
-                    ) .
-                    BackendUtility::translationCount(
-                        $table,
-                        $row['uid'],
-                        ' ' .
-                        $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:labels.translationsOfRecord')
-                    );
+                            $row['uid'],
+                            ' ' .
+                            $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:labels.referencesToRecord'),
+                            $this->getReferenceCount(
+                                $table,
+                                $row['uid']
+                            )
+                        ) .
+                        BackendUtility::translationCount(
+                            $table,
+                            $row['uid'],
+                            ' ' .
+                            $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:labels.translationsOfRecord')
+                        );
                 }
 
                 if ($this->isRecordCurrentBackendUser($table, $row)) {
@@ -1077,7 +1083,7 @@ class RecordListUtility extends DatabaseRecordList
             $this->addActionToCellGroup($cells, $switchAction, 'switch');
         }
 
-            // If the record is edit-locked	by another user, we will show a little warning sign:
+        // If the record is edit-locked	by another user, we will show a little warning sign:
         if ($lockInfo = BackendUtility::isRecordLocked($table, $row['uid'])) {
             $lockAction ='<a href="#" class="btn btn-default" onclick="'.htmlspecialchars('alert('.GeneralUtility::quoteJSvalue($lockInfo['msg']).');return false;').'" ' .
                 ' title="'.htmlspecialchars($lockInfo['msg']).'" >'.
@@ -1089,7 +1095,7 @@ class RecordListUtility extends DatabaseRecordList
         $this->addActionToCellGroup($cells, $lockAction, 'lock');
 
 
-            // Compile items into a DIV-element:
+        // Compile items into a DIV-element:
         $output = '<!-- CONTROL PANEL: ' . $table . ':' . $row['uid'] . ' -->';
         foreach ($cells as $classification => $actions) {
             $output .= ' <div class="btn-group" role="group">' . implode('', $actions) . '</div>';
@@ -1115,9 +1121,27 @@ class RecordListUtility extends DatabaseRecordList
     /**
      * Get database instance
      *
-    * @return \TYPO3\CMS\Core\Database\DatabaseConnection
-    */
+     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     */
     protected function getDatabaseConnection() {
         return $GLOBALS['TYPO3_DB'];
+    }
+
+    /**
+     * @param string $table
+     * @param int $id
+     * @param array $addWhere
+     * @param array $selectFields
+     * @return array
+     */
+    protected function getQueryParts(string $table, int $id, array $addWhere, array $selectFields) : array {
+        if (version_compare(TYPO3_version, '8.0.0', '<')) {
+            $fieldList = implode(',', $selectFields);
+            $queryParts = $this->makeQueryArray($table, $id, implode(' ', $addWhere), $fieldList);
+        } else {
+            $queryBuilder = $this->getQueryBuilder($table, $id, $addWhere, $selectFields);
+            $queryParts = $queryBuilder->getQueryParts();
+        }
+        return $queryParts;
     }
 }
