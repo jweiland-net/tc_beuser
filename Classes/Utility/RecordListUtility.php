@@ -181,7 +181,7 @@ class RecordListUtility extends DatabaseRecordList
         if ($this->localizationView && $l10nEnabled) {
             $this->fieldArray[] = '_LOCALIZATION_';
             $this->fieldArray[] = '_LOCALIZATION_b';
-            $addWhere[] = 'AND (
+            $addWhere[] = '(
 				' . $GLOBALS['TCA'][$table]['ctrl']['languageField'] . '<=0
 				OR
 				' . $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] . ' = 0
@@ -279,21 +279,19 @@ class RecordListUtility extends DatabaseRecordList
 
         // ingo.renner@dkd.de
         if ($this->hideDisabledRecords) {
-            $addWhere[] = 'AND '.$table.'.'
-                .$GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['disabled']
-                .' = 0';
+            $addWhere[] = sprintf('`%s`.`%s` = 0', $table, $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['disabled']);
         }
 
         //ingo.renner@dkd.de
         if ($this->getBackendUserAuthentication()->user['admin'] == '0' && $table == 'be_users') {
-            $addWhere[] = 'AND admin = 0';
-            $addWhere[] = 'AND username NOT LIKE ("_cli%") ';
+            $addWhere[] = 'admin = 0';
+            $addWhere[] = 'username NOT LIKE ("_cli%") ';
         }
 
         //dkd-kartolo
         //mod2, exclude fe_user which is also be_user
         if ($table == 'fe_users') {
-            $addWhere[] = 'AND username not in '.$this->excludeBE;
+            $addWhere[] = 'username not in '.$this->excludeBE;
         }
 
         //dkd-kartolo
@@ -301,9 +299,9 @@ class RecordListUtility extends DatabaseRecordList
         if ($table == 'be_groups' && $this->getBackendUserAuthentication()->user['admin']!= '1') {
             $groupID = implode(',', TcBeuserUtility::showGroupID());
             if (!empty($groupID)) {
-                $addWhere[] = 'AND uid in ('.$groupID.')';
+                $addWhere[] = 'uid in ('.$groupID.')';
             } else {
-                $addWhere[] = 'AND uid not in ('.TcBeuserUtility::getAllGroupsID().')';
+                $addWhere[] = 'uid not in ('.TcBeuserUtility::getAllGroupsID().')';
             }
         }
 
@@ -1137,7 +1135,8 @@ class RecordListUtility extends DatabaseRecordList
     protected function getQueryParts(string $table, int $id, array $addWhere, array $selectFields) : array {
         if (version_compare(TYPO3_version, '8.0.0', '<')) {
             $fieldList = implode(',', $selectFields);
-            $queryParts = $this->makeQueryArray($table, $id, implode(' ', $addWhere), $fieldList);
+            $addWhere = 'AND ' . implode(' AND ', $addWhere);
+            $queryParts = $this->makeQueryArray($table, $id, $addWhere, $fieldList);
         } else {
             $queryBuilder = $this->getQueryBuilder($table, $id, $addWhere, $selectFields);
             $queryParts = $queryBuilder->getQueryParts();
