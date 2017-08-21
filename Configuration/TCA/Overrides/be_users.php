@@ -41,3 +41,14 @@ TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
 unset($GLOBALS['TCA']['be_users']['columns']['usergroup']['config']['wizards']);
 
 $GLOBALS['TCA']['be_users']['columns']['usergroup']['config']['size'] = '10';
+
+// initialize BE user. Unfortunately $GLOBALS['BE_USER'] is not set and we ca not use it here
+$backendUser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Authentication\BackendUserAuthentication::class);
+$backendUser->start();
+
+// disable possibility to edit usergroups
+if (!$backendUser->isAdmin()) {
+    $GLOBALS['TCA']['be_users']['columns']['usergroup']['config']['fieldControl']['editPopup']['disabled'] = true;
+    $GLOBALS['TCA']['be_users']['columns']['usergroup']['config']['fieldControl']['addRecord']['disabled'] = true;
+    $GLOBALS['TCA']['be_users']['columns']['usergroup']['config']['fieldControl']['listModule']['disabled'] = true;
+}
