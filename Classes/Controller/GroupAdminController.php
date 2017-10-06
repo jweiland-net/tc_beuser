@@ -30,6 +30,7 @@ use TYPO3\CMS\Backend\Form\FormResultCompiler;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Imaging\Icon;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -444,7 +445,7 @@ class GroupAdminController extends AbstractModuleController
             $defaultColumnArray = explode(',', $showColumn);
 
             foreach ($removeColumnArray as $col) {
-                $defaultColumnArray = GeneralUtility::removeArrayEntryByValue($defaultColumnArray, $col);
+                $defaultColumnArray = ArrayUtility::removeArrayEntryByValue($defaultColumnArray, $col);
             }
 
             $showColumn = implode(',', $defaultColumnArray);
