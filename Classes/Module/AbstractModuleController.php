@@ -374,7 +374,7 @@ abstract class AbstractModuleController extends BaseScriptClass
     /**
      * Create the panel of buttons for submitting the form or otherwise perform operations.
      *
-     * @return array All available buttons as an assoc. array
+     * @return void
      */
     protected function getSaveButton()
     {

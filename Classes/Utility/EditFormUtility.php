@@ -121,8 +121,6 @@ class EditFormUtility
      */
     public $error;
 
-
-
     public function makeEditForm()
     {
         // Initialize variables:
