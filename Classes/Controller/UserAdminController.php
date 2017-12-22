@@ -190,9 +190,9 @@ class UserAdminController extends AbstractModuleController
             $tce = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
 
             // Setting default values specific for the user:
-            $TCAdefaultOverride = $this->getBackendUser()->getTSConfigProp('TCAdefaults');
-            if (is_array($TCAdefaultOverride)) {
-                $tce->setDefaultsFromUserTS($TCAdefaultOverride);
+            $tcaDefaultOverride = $this->getBackendUser()->getTSConfigProp('TCAdefaults');
+            if (is_array($tcaDefaultOverride)) {
+                $tce->setDefaultsFromUserTS($tcaDefaultOverride);
             }
 
             // Setting internal vars:
@@ -292,20 +292,20 @@ class UserAdminController extends AbstractModuleController
 
         // if going to edit a record, a menu item is dynamicaly added to
         // the dropdown which is otherwise not visible
-        $SET = GeneralUtility::_GET('SET');
-        if (isset($SET['function']) && $SET['function'] == 'edit') {
-            $this->MOD_SETTINGS['function'] = $SET['function'];
+        $set = GeneralUtility::_GET('SET');
+        if (isset($set['function']) && $set['function'] == 'edit') {
+            $this->MOD_SETTINGS['function'] = $set['function'];
             $this->MOD_MENU['function']['edit'] = $this->getLanguageService()->getLL('edit-user');
             $this->editconf = GeneralUtility::_GET('edit');
         }
 
         //import fe user
-        if ($SET['function'] == 'import') {
-            $this->MOD_SETTINGS['function'] = $SET['function'];
+        if ($set['function'] == 'import') {
+            $this->MOD_SETTINGS['function'] = $set['function'];
         }
 
-        if ($SET['function'] == 'action') {
-            $this->MOD_SETTINGS['function'] = $SET['function'];
+        if ($set['function'] == 'action') {
+            $this->MOD_SETTINGS['function'] = $set['function'];
         }
     }
 

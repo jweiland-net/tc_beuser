@@ -42,7 +42,7 @@ class PwdWizardUtility
 
     public $backPath = '../../../../typo3/';
 
-    public function main($PA, $pObj)
+    public function main($parentArray, $pObj)
     {
         $output = '';
 
@@ -52,7 +52,7 @@ class PwdWizardUtility
             $output .= '<script src="' . ExtensionManagementUtility::extRelPath('tc_beuser') .
                 'Resources/Public/JavaScript/pwdgen.js" type="text/javascript"></script>';
             $onclick = 'pass = mkpass();' .
-                'document.'.$PA['formName'].'[\''.$PA['itemName'].'\'].value = pass;';
+                'document.'.$parentArray['formName'].'[\''.$parentArray['itemName'].'\'].value = pass;';
             $onclick .= 'top.TYPO3.Notification.success(\'' .
                 $GLOBALS['LANG']->sL('LLL:EXT:tc_beuser/Resources/Private/Language/locallangUserAdmin.xlf:password-wizard-notif-header', 1) .
                 '\', ' .

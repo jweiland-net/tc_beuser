@@ -517,11 +517,10 @@ abstract class AbstractModuleController extends BaseScriptClass
      */
     public function getNewIconMode($table, $key = 'saveDocNew')
     {
-        $TSconfig = $this->getBackendUser()->getTSConfig('options.' . $key);
-        $output = trim(isset($TSconfig['properties'][$table]) ? $TSconfig['properties'][$table] : $TSconfig['value']);
+        $tsConfig = $this->getBackendUser()->getTSConfig('options.' . $key);
+        $output = trim(isset($tsConfig['properties'][$table]) ? $tsConfig['properties'][$table] : $tsConfig['value']);
         return $output;
     }
-
 
     public function getInlineJS()
     {

@@ -883,7 +883,6 @@ class OverviewUtility
             );
             $row = $this->getDatabaseConnection()->sql_fetch_assoc($res);
 
-            $TSconfig = GeneralUtility::intExplode(',', $row['TSconfig']);
             $content .= '<pre>'.$row['TSconfig'].'</pre><br />'."\n";
         }
 
@@ -1078,10 +1077,10 @@ class OverviewUtility
         $tree->expandAll = true;
 
             // Creating top icon; the main group
-        $HTML = $this->iconFactory->getIconForRecord('be_groups', $treeStartingRecord, Icon::SIZE_SMALL)->render();
+        $html = $this->iconFactory->getIconForRecord('be_groups', $treeStartingRecord, Icon::SIZE_SMALL)->render();
         $tree->tree[] = array(
             'row' => $treeStartingRecord,
-            'HTML' => $HTML
+            'HTML' => $html
         );
 
         $dataTree = array();

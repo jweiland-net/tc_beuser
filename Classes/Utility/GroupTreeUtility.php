@@ -101,7 +101,7 @@ class GroupTreeUtility extends AbstractTreeView
         $this->buffer_idH = array();
         // Init vars
         $depth = (int)$depth;
-        $HTML = '';
+        $html = '';
         $a = 0;
         $res = $this->getDataInit($uid);
         $c = $this->getDataCount($res);
@@ -163,12 +163,12 @@ class GroupTreeUtility extends AbstractTreeView
 
             // Set HTML-icons, if any:
             if ($this->makeHTML) {
-                $HTML = $treeIcon . $this->PMicon($row, $a, $c, $nextCount, $isOpen) . $this->wrapStop($this->getIcon($row), $row);
+                $html = $treeIcon . $this->PMicon($row, $a, $c, $nextCount, $isOpen) . $this->wrapStop($this->getIcon($row), $row);
             }
             // Finally, add the row/HTML content to the ->tree array in the reserved key.
             $this->tree[$treeKey] = array(
                 'row' => $row,
-                'HTML' => $HTML,
+                'HTML' => $html,
                 'invertedDepth' => $depth,
                 'depthData' => $depthData,
                 'bank' => $this->bank,

@@ -72,7 +72,7 @@ class TcBeuserUtility
         }
     }
 
-    public static function allowWhereMember($TSconfig)
+    public static function allowWhereMember($tsConfig)
     {
         $userGroup = explode(',', self::getBackendUser()->user['usergroup']);
 
@@ -109,10 +109,10 @@ class TcBeuserUtility
         return $allowCreated;
     }
 
-    public static function allow($TSconfig, $where)
+    public static function allow($tsConfig, $where)
     {
-        if (isset($TSconfig['allow']) && !empty($TSconfig['allow'])) {
-            if ($TSconfig['allow'] == 'all') {
+        if (isset($tsConfig['allow']) && !empty($tsConfig['allow'])) {
+            if ($tsConfig['allow'] == 'all') {
                 $addWhere = empty($showGroupID) ? '' : ' AND uid not in ('.implode(',', $showGroupID).')';
                 $res = self::getDatabaseConnection()->exec_SELECTquery(
                     'uid',
@@ -124,10 +124,10 @@ class TcBeuserUtility
                         $allowID[] = $row['uid'];
                     }
                 }
-            } elseif (strstr($TSconfig['allow'], ',')) {
-                $allowID = explode(',', $TSconfig['allow']);
+            } elseif (strstr($tsConfig['allow'], ',')) {
+                $allowID = explode(',', $tsConfig['allow']);
             } else {
-                $allowID = array(trim($TSconfig['allow']));
+                $allowID = array(trim($tsConfig['allow']));
             }
         } else {
             $allowID = array();
@@ -135,13 +135,13 @@ class TcBeuserUtility
         return $allowID;
     }
 
-    public static function denyID($TSconfig, $where)
+    public static function denyID($tsConfig, $where)
     {
-        if (isset($TSconfig['deny']) && !empty($TSconfig['deny'])) {
-            if (strstr($TSconfig['deny'], ',')) {
-                $denyID = explode(',', $TSconfig['deny']);
+        if (isset($tsConfig['deny']) && !empty($tsConfig['deny'])) {
+            if (strstr($tsConfig['deny'], ',')) {
+                $denyID = explode(',', $tsConfig['deny']);
             } else {
-                $denyID = array(trim($TSconfig['deny']));
+                $denyID = array(trim($tsConfig['deny']));
             }
         } else {
             $denyID = array();
@@ -149,19 +149,19 @@ class TcBeuserUtility
         return $denyID;
     }
 
-    public static function showPrefixID($TSconfig, $where, $mode)
+    public static function showPrefixID($tsConfig, $where, $mode)
     {
         $addWhere = "";
 
-        if (isset($TSconfig[$mode]) && !empty($TSconfig[$mode])) {
-            if (strstr($TSconfig[$mode], ',')) {
-                $prefix = explode(',', $TSconfig[$mode]);
+        if (isset($tsConfig[$mode]) && !empty($tsConfig[$mode])) {
+            if (strstr($tsConfig[$mode], ',')) {
+                $prefix = explode(',', $tsConfig[$mode]);
                 foreach ($prefix as $pre) {
                     $whereTemp[] = 'title like '.self::getDatabaseConnection()->fullQuoteStr(trim($pre).'%', 'be_groups');
                 }
                 $addWhere .= ' AND ('.implode(' OR ', $whereTemp).')';
             } else {
-                $addWhere .= ' AND '.'title like '.self::getDatabaseConnection()->fullQuoteStr($TSconfig[$mode].'%', 'be_groups');
+                $addWhere .= ' AND '.'title like '.self::getDatabaseConnection()->fullQuoteStr($tsConfig[$mode].'%', 'be_groups');
             }
 
             $res = self::getDatabaseConnection()->exec_SELECTquery(
@@ -184,10 +184,10 @@ class TcBeuserUtility
 
     public static function showGroupID()
     {
-        $TSconfig = self::getBackendUser()->userTS['tx_tcbeuser.'] ? self::getBackendUser()->userTS['tx_tcbeuser.'] : array();
+        $tsConfig = self::getBackendUser()->userTS['tx_tcbeuser.'] ? self::getBackendUser()->userTS['tx_tcbeuser.'] : array();
             // default value
-        $TSconfig['allowCreated'] = (strlen(trim($TSconfig['allowCreated'])) > 0)? $TSconfig['allowCreated'] : '1';
-        $TSconfig['allowWhereMember'] = (strlen(trim($TSconfig['allowWhereMember'])) > 0)? $TSconfig['allowWhereMember'] : '1';
+        $tsConfig['allowCreated'] = (strlen(trim($tsConfig['allowCreated'])) > 0)? $tsConfig['allowCreated'] : '1';
+        $tsConfig['allowWhereMember'] = (strlen(trim($tsConfig['allowWhereMember'])) > 0)? $tsConfig['allowWhereMember'] : '1';
 
         $where = 'pid = 0'.BackendUtility::deleteClause('be_groups');
 
@@ -195,23 +195,23 @@ class TcBeuserUtility
             $showGroupID = array();
 
                 //put ID allowWhereMember
-            if ($TSconfig['allowWhereMember'] == 1) {
-                $allowWhereMember = self::allowWhereMember($TSconfig);
+            if ($tsConfig['allowWhereMember'] == 1) {
+                $allowWhereMember = self::allowWhereMember($tsConfig);
                 $showGroupID = array_merge($showGroupID, $allowWhereMember);
             }
 
                 //put ID allowCreated
-            if ($TSconfig['allowCreated'] == 1) {
-                $allowCreated = self::allowCreated($TSconfig, $where);
+            if ($tsConfig['allowCreated'] == 1) {
+                $allowCreated = self::allowCreated($tsConfig, $where);
                 $showGroupID = array_merge($showGroupID, $allowCreated);
             }
 
                 //allow
-            $allowID = self::allow($TSconfig, $where);
+            $allowID = self::allow($tsConfig, $where);
             $showGroupID = array_merge($showGroupID, $allowID);
 
                 //put ID showPrefix
-            $showPrefix = self::showPrefixID($TSconfig, $where, 'showPrefix');
+            $showPrefix = self::showPrefixID($tsConfig, $where, 'showPrefix');
             $showGroupID = array_merge($showGroupID, $showPrefix);
         } else {
             //explicitDeny
@@ -219,27 +219,27 @@ class TcBeuserUtility
             $denyGroupID = array();
 
                 //put ID allowWhereMember
-            if ($TSconfig['allowWhereMember'] == 0) {
-                $allowWhereMember = self::allowWhereMember($TSconfig);
+            if ($tsConfig['allowWhereMember'] == 0) {
+                $allowWhereMember = self::allowWhereMember($tsConfig);
                 $denyGroupID = array_merge($denyGroupID, $allowWhereMember);
             }
 
                 //put ID allowCreated
-            if ($TSconfig['allowCreated'] == 0) {
-                $allowCreated = self::allowCreated($TSconfig, $where);
+            if ($tsConfig['allowCreated'] == 0) {
+                $allowCreated = self::allowCreated($tsConfig, $where);
                 $denyGroupID = array_merge($denyGroupID, $allowCreated);
             }
 
                 //deny
-            if ($TSconfig['deny'] == 'all') {
+            if ($tsConfig['deny'] == 'all') {
                 $denyGroupID = array_merge($denyGroupID, explode(',', self::getAllGroupsID()));
             } else {
-                $denyID = self::denyID($TSconfig, $where);
+                $denyID = self::denyID($tsConfig, $where);
                 $denyGroupID = array_merge($denyGroupID, $denyID);
             }
 
                 //put ID dontShowPrefix
-            $dontShowPrefix = self::showPrefixID($TSconfig, $where, 'dontShowPrefix');
+            $dontShowPrefix = self::showPrefixID($tsConfig, $where, 'dontShowPrefix');
             $denyGroupID = array_merge($denyGroupID, $dontShowPrefix);
 
                 //remove $denyGroupID from $showGroupID

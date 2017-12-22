@@ -176,9 +176,9 @@ class FilemountsViewController extends AbstractModuleController
             $tce = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
 
             // Setting default values specific for the user:
-            $TCAdefaultOverride = $this->getBackendUser()->getTSConfigProp('TCAdefaults');
-            if (is_array($TCAdefaultOverride)) {
-                $tce->setDefaultsFromUserTS($TCAdefaultOverride);
+            $tcaDefaultOverride = $this->getBackendUser()->getTSConfigProp('TCAdefaults');
+            if (is_array($tcaDefaultOverride)) {
+                $tce->setDefaultsFromUserTS($tcaDefaultOverride);
             }
 
             // Setting internal vars:
@@ -277,9 +277,9 @@ class FilemountsViewController extends AbstractModuleController
             100000
         );
 
-        $SET = GeneralUtility::_GET('SET');
-        if ($SET['function'] == 'action') {
-            $this->MOD_SETTINGS['function'] = $SET['function'];
+        $set = GeneralUtility::_GET('SET');
+        if ($set['function'] == 'action') {
+            $this->MOD_SETTINGS['function'] = $set['function'];
         }
     }
 

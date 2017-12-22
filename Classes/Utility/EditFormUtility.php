@@ -297,10 +297,10 @@ class EditFormUtility
                                 //dkd-kartolo
                                 //mod3, read TSconfig createWithPrefix
                                 if ($table == 'be_groups') {
-                                    $TSconfig = $this->getBackendUser()->userTS['tx_tcbeuser.'];
-                                    if (is_array($TSconfig)) {
-                                        if (array_key_exists('createWithPrefix', $TSconfig) && $command == 'new') {
-                                            $formData['databaseRow']['title'] = $TSconfig['createWithPrefix'];
+                                    $tsConfig = $this->getBackendUser()->userTS['tx_tcbeuser.'];
+                                    if (is_array($tsConfig)) {
+                                        if (array_key_exists('createWithPrefix', $tsConfig) && $command == 'new') {
+                                            $formData['databaseRow']['title'] = $tsConfig['createWithPrefix'];
                                         }
                                     }
 
