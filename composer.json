@@ -1,7 +1,7 @@
 {
-  "name": "dkd/tc-beuser",
+  "name": "jweiland/tc-beuser",
   "type": "typo3-cms-extension",
-  "description": "A collection of modules for administer BE users more comfortably",
+  "description": "(Fork of dkd/tc-beuser) A collection of modules for administer BE users more comfortably",
   "keywords": [
     "TYPO3",
     "extension",
