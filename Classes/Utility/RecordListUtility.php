@@ -428,7 +428,7 @@ class RecordListUtility extends DatabaseRecordList
 
                 $accRows = array();
                 // Accumulate rows here
-                while ($row = $result instanceof \Doctrine\DBAL\Driver\PDOStatement ? $result->fetch() : $db->sql_fetch_assoc($result)) {
+                while ($row = $result instanceof \Doctrine\DBAL\Driver\PDOStatement ? $result->fetch() : $result->fetch(\PDO::FETCH_ASSOC)) {
                     if (!$this->isRowListingConditionFulfilled($table, $row)) {
                         continue;
                     }
