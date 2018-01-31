@@ -19,7 +19,7 @@ $tempCol = array(
             'foreign_table' => 'be_users',
             'foreign_table_where' => 'ORDER BY username ASC',
             'size' => '10',
-            'maxitems' => 100,
+            'maxitems' => 10000,
             'iconsInOptionTags' => 1,
         )
     )
