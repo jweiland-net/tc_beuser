@@ -3,14 +3,14 @@ if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
-if (TYPO3_MODE == 'BE') {
+if (TYPO3_MODE === 'BE') {
     $extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY);
 
         // add module before 'Help'
     if (!isset($GLOBALS['TBE_MODULES']['tcTools'])) {
         $temp_TBE_MODULES = array();
         foreach ($GLOBALS['TBE_MODULES'] as $key => $val) {
-            if ($key == 'help') {
+            if ($key === 'help') {
                 $temp_TBE_MODULES['tcTools'] = '';
                 $temp_TBE_MODULES[$key] = $val;
             } else {

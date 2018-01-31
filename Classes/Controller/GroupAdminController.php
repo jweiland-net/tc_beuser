@@ -34,6 +34,7 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Module 'Group Admin' for the 'tc_beuser' extension.
@@ -95,7 +96,7 @@ class GroupAdminController extends AbstractModuleController
     public function loadLocallang()
     {
         $this->getLanguageService()->includeLLFile('EXT:tc_beuser/Resources/Private/Language/locallangGroupAdmin.xlf');
-        $this->getLanguageService()->includeLLFile('EXT:lang/locallang_alt_doc.xml');
+        $this->getLanguageService()->includeLLFile('EXT:lang/locallang_alt_doc.xlf');
     }
 
     public function main()
@@ -149,7 +150,7 @@ class GroupAdminController extends AbstractModuleController
             $prefix = $this->getBackendUser()->userTS['tx_tcbeuser.']['createWithPrefix'];
 
             if (strpos($data['title'], $prefix) !== 0 &&
-                !($this->MOD_SETTINGS['function'] == 'action' && isset($data['hidden']))
+                !($this->MOD_SETTINGS['function'] === 'action' && isset($data['hidden']))
             ) {
                 $this->data[$table[0]][$uid[0]]['title'] = $prefix.' '.$this->data[$table[0]][$uid[0]]['title'];
             }
@@ -437,7 +438,7 @@ class GroupAdminController extends AbstractModuleController
         $content = '';
 
         // the default field to show
-        $showColumn = 'hidden,title,db_mountpoints,file_mountpoints,subgroup,members,description,TSconfig';
+        $showColumn = 'hidden,title,db_mountpoints,category_perms,file_mountpoints,subgroup,members,description,TSconfig';
 
         // get hideColumnGroup from TS and remove it from the showColumn
         if ($this->getBackendUser()->userTS['tc_beuser.']['hideColumnGroup']) {

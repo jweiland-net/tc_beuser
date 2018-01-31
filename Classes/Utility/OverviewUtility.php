@@ -625,7 +625,7 @@ class OverviewUtility
                         if ($val[1] == $dataParts[2]) {
                             $data .= $iconsPath[$dataParts['3']] .
                                 ' ['.$adLabel[$dataParts['3']].'] '.
-                                $this->getLanguageService()->sl($val[0]).'<br />';
+                                $this->getLanguageService()->sL($val[0]).'<br />';
                         }
                     }
                 }

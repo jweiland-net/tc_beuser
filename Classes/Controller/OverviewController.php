@@ -537,7 +537,7 @@ class OverviewController extends AbstractModuleController
                         $userRecord['uid'],
                         ' (There are %s reference(s) to this record!)'
                     )
-                ) . ')) { return jumpToUrl(\'' . $this->actionOnClick($params, BackendUtility::getModuleUrl($GLOBALS['MCONF']['name']), $this->MOD_SETTINGS) . '\'); } return false;'
+                ) . ')) { return jumpToUrl(\'' . $this->actionOnClick($params, BackendUtility::getModuleUrl($GLOBALS['MCONF']['name'])) . '\'); } return false;'
             ) . '">' .
             $icon .
             '</a>';

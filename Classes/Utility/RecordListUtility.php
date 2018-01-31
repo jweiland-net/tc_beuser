@@ -31,6 +31,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
 use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
@@ -88,11 +89,11 @@ class RecordListUtility extends DatabaseRecordList
                 // iLimit is set depending on whether we're in single- or multi-table mode
                 if ($this->table) {
                     $this->iLimit = (isset($GLOBALS['TCA'][$tableName]['interface']['maxSingleDBListItems']) ?
-                        intval($GLOBALS['TCA'][$tableName]['interface']['maxSingleDBListItems']) :
+                        (int)$GLOBALS['TCA'][$tableName]['interface']['maxSingleDBListItems']:
                         $this->itemsLimitSingleTable);
                 } else {
                     $this->iLimit = (isset($GLOBALS['TCA'][$tableName]['interface']['maxDBListItems']) ?
-                        intval($GLOBALS['TCA'][$tableName]['interface']['maxDBListItems']) :
+                        (int)$GLOBALS['TCA'][$tableName]['interface']['maxDBListItems']:
                         $this->itemsLimitPerTable);
                 }
                 if ($this->showLimit) {
@@ -999,14 +1000,14 @@ class RecordListUtility extends DatabaseRecordList
                         $params = '&data[' . $table . '][' . $row['uid'] . '][' . $hiddenField . ']=0&SET[function]=action';
                         $hideAction = '<a href="#" class="btn btn-default" ' .
                             ' title="' . $unhideTitle . '" ' .
-                            'onclick="' . htmlspecialchars('return jumpToUrl(\'' . self::actionOnClick($params) . '\');') . '">' .
+                            'onclick="' . htmlspecialchars('return jumpToUrl(\'' . $this->actionOnClick($params) . '\');') . '">' .
                             $this->iconFactory->getIcon('actions-edit-unhide', Icon::SIZE_SMALL)->render() .
                             '</a>';
                     } else {
                         $params = '&data[' . $table . '][' . $row['uid'] . '][' . $hiddenField . ']=1&SET[function]=action';
                         $hideAction = '<a href="#" class="btn btn-default" ' .
                             'title="' . $hideTitle . '" ' .
-                            'onclick=" ' . htmlspecialchars('return jumpToUrl(\'' . self::actionOnClick($params) . '\');') . '">' .
+                            'onclick=" ' . htmlspecialchars('return jumpToUrl(\'' . $this->actionOnClick($params) . '\');') . '">' .
                             $this->iconFactory->getIcon('actions-edit-hide', Icon::SIZE_SMALL)->render() .
                             '</a>';
                     }

@@ -3,7 +3,7 @@ if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
-if (TYPO3_MODE == 'BE') {
+if (TYPO3_MODE === 'BE') {
     // enabling regular BE users to edit BE groups
     $GLOBALS['TCA']['be_groups']['ctrl']['adminOnly'] = 0;
 
@@ -24,4 +24,6 @@ $tempCol = array(
         )
     )
 );
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('be_groups', $tempCol, 1);
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('be_groups', $tempCol);
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('be_groups', 'members');

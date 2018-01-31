@@ -19,6 +19,6 @@ if (TYPO3_MODE) {
 
     //xclass-ing the record/info a.k.a show_item module
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Backend\\Controller\\ContentElement\\ElementInformationController'] = array(
-        'className' => 'dkd\\TcBeuser\\Xclass\\RecordInfoController'
+        'className' => \dkd\TcBeuser\Xclass\RecordInfoController::class
     );
 }

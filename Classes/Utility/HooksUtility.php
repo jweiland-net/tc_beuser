@@ -163,7 +163,7 @@ class HooksUtility
 
             //put back 'members' to TCA
             $tempCol = $this->columns;
-            ExtensionManagementUtility::addTCAcolumns("be_groups", $tempCol, 1);
+            ExtensionManagementUtility::addTCAcolumns("be_groups", $tempCol);
         }
     }
 }
