@@ -82,6 +82,7 @@ class HooksUtility
                 } else {
                     $uid = $id;
                 }
+
                 $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
                     'uid, title',
                     $table,

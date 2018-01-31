@@ -284,7 +284,8 @@ class EditFormUtility
                                     if ($this->getDatabaseConnection()->sql_num_rows($res)>0) {
                                         while ($row = $this->getDatabaseConnection()->sql_fetch_assoc($res)) {
                                             if (GeneralUtility::inList($row['usergroup'], $formData['databaseRow']['uid'])) {
-                                                $users[] = $row['uid'].'|'.$row['username'];
+                                                $users[] = $row['uid'];
+                                                //$users[] = $row['uid'].'|'.$row['username'];
                                             }
                                         }
                                     }
