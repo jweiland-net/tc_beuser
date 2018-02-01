@@ -557,7 +557,7 @@ class UserAdminController extends AbstractModuleController
         $content = '';
 
         // the default field to show
-        $showColumn = 'disable,username,password,usergroup,realName,email,lang,name,first_name,last_name';
+        $showColumn = 'disable,username,password,usergroup,realName,email,db_mountpoints,file_mountpoints,lang,name,first_name,last_name';
 
         // get hideColumnGroup from TS and remove it from the showColumn
         if ($this->getBackendUser()->userTS['tc_beuser.']['hideColumnGroup']) {
