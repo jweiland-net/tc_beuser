@@ -16,7 +16,7 @@
     }
   ],
   "license": [
-    "GPL-2.0+"
+    "GPL-2.0-or-later"
   ],
   "support": {
     "issues": "https://github.com/dkd/tc_beuser"
