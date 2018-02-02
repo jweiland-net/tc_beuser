@@ -168,6 +168,9 @@ class EditFormUtility
                                     $formDataCompilerInput['overrideValues'] = $this->overrideVals[$table];
                                 }
 
+                                $formDataCompilerInput['processedTca'] = $GLOBALS['TCA'][$formDataCompilerInput['tableName']];
+                                $formDataCompilerInput['processedTca']['columns']['members']['config']['type'] = 'select';
+                                $formDataCompilerInput['processedTca']['columns']['members']['config']['renderType'] = 'selectMultipleSideBySide';
                                 $formData = $formDataCompiler->compile($formDataCompilerInput);
 
                                 // Set this->viewId if possible
