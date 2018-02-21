@@ -420,15 +420,15 @@ class RecordListUtility extends DatabaseRecordList
                 $prevPrevUid = 0;
                 // Get first two rows and initialize prevPrevUid and prevUid if on page > 1
                 if ($this->firstElementNumber > 2 && $this->iLimit > 0) {
-                    $row = $row = $result instanceof \Doctrine\DBAL\Driver\PDOStatement ? $result->fetch() : $result->fetch(\PDO::FETCH_ASSOC);
+                    $row = $row = $result instanceof \Doctrine\DBAL\Driver\Statement ? $result->fetch() : $result->fetch(\PDO::FETCH_ASSOC);
                     $prevPrevUid = -((int)$row['uid']);
-                    $row = $row = $result instanceof \Doctrine\DBAL\Driver\PDOStatement ? $result->fetch() : $result->fetch(\PDO::FETCH_ASSOC);
+                    $row = $row = $result instanceof \Doctrine\DBAL\Driver\Statement ? $result->fetch() : $result->fetch(\PDO::FETCH_ASSOC);
                     $prevUid = $row['uid'];
                 }
 
                 $accRows = array();
                 // Accumulate rows here
-                while ($row = $result instanceof \Doctrine\DBAL\Driver\PDOStatement ? $result->fetch() : $result->fetch(\PDO::FETCH_ASSOC)) {
+                while ($row = $result instanceof \Doctrine\DBAL\Driver\Statement ? $result->fetch() : $result->fetch(\PDO::FETCH_ASSOC)) {
                     if (!$this->isRowListingConditionFulfilled($table, $row)) {
                         continue;
                     }
